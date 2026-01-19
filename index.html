@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflog | The SQLite of Event Sourcing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        reflog: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8', // Light Blue
+                            500: '#0ea5e9', // Primary Blue
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                            950: '#082f49', // Deep background
+                        },
+                        rust: {
+                            500: '#dea584', // Rust-lang orange accent
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white antialiased selection:bg-reflog-500 selection:text-white">
+
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-gray-800 bg-gray-900/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="self-center text-2xl font-bold whitespace-nowrap text-white tracking-tight">Reflog<span class="text-reflog-400">.</span></span>
+            </a>
+            <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                <a href="https://github.com/your-username/reflog" class="text-white bg-reflog-600 hover:bg-reflog-700 focus:ring-4 focus:outline-none focus:ring-reflog-900 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all">
+                    Get Started
+                </a>
+            </div>
+            <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1">
+                <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-800 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+                    <li><a href="#features" class="block py-2 px-3 text-gray-400 hover:text-white md:p-0 transition-colors">Features</a></li>
+                    <li><a href="#how-it-works" class="block py-2 px-3 text-gray-400 hover:text-white md:p-0 transition-colors">Architecture</a></li>
+                    <li><a href="#docs" class="block py-2 px-3 text-gray-400 hover:text-white md:p-0 transition-colors">Documentation</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="grid-bg relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+
+            <div class="inline-flex items-center gap-x-2 rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-sm font-medium text-gray-300 mb-8 backdrop-blur-sm">
+                <span class="flex h-2 w-2 rounded-full bg-reflog-400 animate-pulse"></span>
+                v1.0 Now Available
+            </div>
+
+            <h1 class="mx-auto max-w-4xl font-display text-5xl font-bold tracking-tight text-white sm:text-7xl">
+                The "SQLite" of <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-reflog-400 to-rust-500">Event Sourcing</span>
+            </h1>
+
+            <p class="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-gray-400">
+                Single binary. High-performance gRPC ingest. Zero-config "Time Travel" queries.
+                Reflog brings the power of the Data Lakehouse to your application backend without the complexity.
+            </p>
+
+            <div class="mt-10 flex justify-center gap-x-6">
+                <a href="#" class="rounded-md bg-reflog-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-reflog-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-reflog-400 transition-all">
+                    Download Binary
+                </a>
+                <a href="#" class="group text-sm font-semibold leading-6 text-white flex items-center gap-2">
+                    View on GitHub <span aria-hidden="true" class="group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+
+            <div class="mt-16 relative mx-auto max-w-4xl rounded-xl bg-gray-900 shadow-2xl ring-1 ring-white/10 sm:mt-24 overflow-hidden text-left">
+                <div class="flex items-center gap-2 border-b border-gray-800 bg-gray-800/50 px-4 py-2">
+                    <div class="h-3 w-3 rounded-full bg-red-500"></div>
+                    <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+                    <div class="h-3 w-3 rounded-full bg-green-500"></div>
+                    <span class="ml-2 text-xs text-gray-500 font-mono">bash — reflog-cli</span>
+                </div>
+                <div class="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+                    <div class="flex">
+                        <span class="text-green-400 mr-2">➜</span>
+                        <span class="text-gray-300">reflog ingest --entity user_123 --op UPDATE --payload '{"status": "active"}'</span>
+                    </div>
+                    <div class="text-gray-500 mb-4">✓ Event committed to segment 4 (0.4ms)</div>
+
+                    <div class="flex">
+                        <span class="text-green-400 mr-2">➜</span>
+                        <span class="text-gray-300">duckdb -c "SELECT * FROM reflog.users <span class="text-reflog-400">AS OF TIMESTAMP '2024-01-01'</span>"</span>
+                    </div>
+                    <pre class="text-blue-300 mt-2">
+┌──────────┬──────────┬───────────┐
+│ id       │ status   │ plan      │
+├──────────┼──────────┼───────────┤
+│ user_123 │ pending  │ free_tier │
+└──────────┴──────────┴───────────┘
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[800px] h-[800px] bg-reflog-500/20 rounded-full blur-[120px] opacity-30"></div>
+    </section>
+
+    <section id="features" class="py-24 bg-gray-900">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl text-center mb-16">
+                <h2 class="text-base font-semibold leading-7 text-reflog-400">Why Reflog?</h2>
+                <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Architecture for Ops. Analytics for Free.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="col-span-1 md:col-span-2 bg-gray-800/50 border border-gray-700 rounded-2xl p-8 hover:border-reflog-500/50 transition-colors">
+                    <div class="h-10 w-10 rounded-lg bg-reflog-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-reflog-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Single Binary Deployment</h3>
+                    <p class="text-gray-400">Forget generic "Big Data" clusters. Reflog is a single Rust binary. No JVM, no ZooKeeper, no headaches. Just run `./reflog-server` and start ingesting.</p>
+                </div>
+
+                <div class="col-span-1 bg-gray-800/50 border border-gray-700 rounded-2xl p-8 hover:border-reflog-500/50 transition-colors">
+                    <div class="h-10 w-10 rounded-lg bg-rust-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-rust-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Native Time Travel</h3>
+                    <p class="text-gray-400">Reflog keeps a perfect audit trail. Query your entity state as it existed 5 minutes ago, or 5 years ago.</p>
+                </div>
+
+                <div class="col-span-1 bg-gray-800/50 border border-gray-700 rounded-2xl p-8 hover:border-reflog-500/50 transition-colors">
+                    <div class="h-10 w-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Open Storage Standards</h3>
+                    <p class="text-gray-400">Data is materialized into standard Parquet files. Query it instantly with DuckDB, Polars, or Amazon Athena.</p>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 bg-gray-800/50 border border-gray-700 rounded-2xl p-8 hover:border-reflog-500/50 transition-colors">
+                    <div class="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Cloud-Native Resilience</h3>
+                    <p class="text-gray-400">Designed for Active/Passive failover using shared block storage (EBS/Azure Disk). Includes strict file locking and automatic crash recovery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-24 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6">Drop-in Integration</h2>
+                    <p class="text-gray-400 text-lg mb-8">
+                        Reflog speaks gRPC. Define your entity schema in Protobuf, point your application at the Reflog node, and stop worrying about state consistency.
+                    </p>
+
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-reflog-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Rust-based for stable, low-latency writes
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-reflog-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Optional Redis Stream integration for buffering
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-reflog-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Automatic "Delta + Base" compaction
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-12 lg:mt-0 bg-gray-800 rounded-xl border border-gray-700 p-6 font-mono text-sm">
+                    <div class="text-gray-500 mb-2">// reflog-config.toml</div>
+                    <div class="text-purple-400">server</div> <span class="text-white">{</span>
+                    <div class="pl-4">
+                        <span class="text-blue-400">listen_addr</span> = <span class="text-green-400">"0.0.0.0:50051"</span><br>
+                        <span class="text-blue-400">storage_path</span> = <span class="text-green-400">"/data"</span>
+                    </div>
+                    <span class="text-white">}</span>
+                    <br>
+                    <div class="text-purple-400">compaction</div> <span class="text-white">{</span>
+                    <div class="pl-4">
+                        <span class="text-blue-400">strategy</span> = <span class="text-green-400">"delta_plus_base"</span><br>
+                        <span class="text-blue-400">interval_seconds</span> = <span class="text-yellow-400">300</span>
+                    </div>
+                    <span class="text-white">}</span>
+                    <br>
+                    <div class="text-purple-400">failover</div> <span class="text-white">{</span>
+                    <div class="pl-4">
+                        <span class="text-blue-400">mode</span> = <span class="text-green-400">"active_passive"</span><br>
+                        <span class="text-blue-400">lock_file</span> = <span class="text-green-400">"_meta/instance.lock"</span>
+                    </div>
+                    <span class="text-white">}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-950 border-t border-gray-800">
+        <div class="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
+            <div class="mt-8 md:order-1 md:mt-0">
+                <p class="text-center text-xs leading-5 text-gray-500">&copy; 2026 Reflog. Open Source Software.</p>
+            </div>
+            <div class="flex justify-center space-x-6 md:order-2">
+                <a href="#" class="text-gray-400 hover:text-gray-300">GitHub</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300">Docs</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
