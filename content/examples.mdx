@@ -1,0 +1,21 @@
+---
+title: Examples
+---
+
+# Examples
+
+Some example snippets (placeholder).
+
+## Ingest an event
+
+```bash
+reflog ingest --entity user_123 --op UPDATE --payload '{"status":"active"}'
+```
+
+## Time travel query
+
+```sql
+SELECT *
+FROM reflog.users
+AS OF TIMESTAMP '2024-01-01';
+```

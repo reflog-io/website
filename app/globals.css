@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+/*
+ * If you want Nextra theme styles globally, you can also import them here:
+ * @import 'nextra-theme-docs/style.css';
+ *
+ * (Currently imported by `app/(docs)/layout.jsx` to keep docs styling scoped.)
+ */
+
+@variant dark (&:where(.dark *));
+
+@theme {
+  --color-reflog-50: #f0f9ff;
+  --color-reflog-100: #e0f2fe;
+  --color-reflog-400: #38bdf8;
+  --color-reflog-500: #0ea5e9;
+  --color-reflog-600: #0284c7;
+  --color-reflog-900: #0c4a6e;
+  --color-reflog-950: #082f49;
+
+  --color-rust-500: #dea584;
+
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    Liberation Mono, Courier New, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.grid-bg {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    );
+}
+
+/* Gradient text with a safe fallback (never invisible). */
+.gradient-text {
+  display: inline-block;
+  padding-bottom: 10px;
+  color: #38bdf8; /* reflog-400 fallback */
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .gradient-text {
+    background-image: linear-gradient(
+      to right,
+      #38bdf8,
+      #dea584
+    ); /* reflog-400 -> rust-500 */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
