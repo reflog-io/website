@@ -1,1 +1,28 @@
 /* Custom docs theme overrides live here. */
+
+/*
+ * Match the main site "dark blue" background (Tailwind `bg-gray-900`).
+ * This file is only imported by the docs layout, so it won't affect the landing site.
+ */
+:root,
+html,
+body {
+  background-color: #111827 !important;
+}
+
+/*
+ * Nextra docs theme uses various panels (sidebar/nav/content wrappers) that can
+ * default to pure black. Make them transparent so the base background shows through.
+ *
+ * (We keep selectors broad to avoid coupling to a specific Nextra internal class list.)
+ */
+body > header,
+body > nav,
+body > aside,
+body > main,
+main,
+nav,
+aside,
+header {
+  background-color: transparent !important;
+}

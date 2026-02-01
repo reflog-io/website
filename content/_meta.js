@@ -2,7 +2,7 @@ export default {
   index: 'Introduction',
   architecture: 'Architecture',
   'getting-started': 'Getting Started',
-  examples: 'Examples',
+  deployments: 'Deployments',
   backfill: 'Backfill',
   clients: 'Clients',
 }

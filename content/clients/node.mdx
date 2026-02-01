@@ -4,7 +4,7 @@ title: Node Client
 
 # Node Client
 
-Example placeholder for a Node.js client.
+TypeScript client for Reflog with runtime protobuf type generation. This client automatically generates type-safe methods from your custom protobuf definitions at runtime. Available on [npm](https://www.npmjs.com/package/@reflog-io/client).
 
 ## Install
 
@@ -12,15 +12,114 @@ Example placeholder for a Node.js client.
 npm install @reflog/client
 ```
 
+## Configuration
+
+The client requires two environment variables:
+
+- `REFLOG_HOST`: The gRPC server host (e.g., `localhost:50051`)
+- `REFLOG_CLIENT_ID`: Your client identifier
+
+Alternatively, you can pass these as configuration options when creating the client.
+
 ## Usage
 
-```js
-import { ReflogClient } from "@reflog/client";
+### Basic Example
 
-const client = new ReflogClient({ url: "http://localhost:50051" });
-await client.ingest({
-  entity: "user_123",
-  op: "UPDATE",
-  payload: { status: "active" },
+```js
+import { createClient } from '@reflog/client';
+
+async function main() {
+  // Initialize the client (reads REFLOG_HOST and REFLOG_CLIENT_ID from env)
+  const reflog = await createClient();
+
+  // Insert a user
+  await reflog.insert.user({
+    entityId: 'user-123',
+    payload: {
+      id: 'user-123',
+      name: 'John Doe',
+      email: 'john@example.com',
+    },
+  });
+
+  // Update an article
+  await reflog.update.article({
+    entityId: 'article-456',
+    payload: {
+      id: 'article-456',
+      title: 'Updated Title',
+      body: 'Updated body content',
+    },
+  });
+
+  // Delete a user
+  await reflog.delete.user('user-123');
+
+  // Close the connection when done
+  await reflog.close();
+}
+
+main().catch(console.error);
+```
+
+### With Custom Configuration
+
+```js
+import { createClient } from '@reflog/client';
+
+const reflog = await createClient({
+  host: 'localhost:50051',
+  clientId: 'my-client-id',
+  retry: {
+    maxRetries: 5,
+    initialBackoffMs: 200,
+    maxBackoffMs: 3000,
+  },
 });
+```
+
+## Type Safety
+
+The client automatically generates methods based on your protobuf definitions. For example, if your `custom.proto` defines:
+
+```protobuf
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message Article {
+  string id = 1;
+  string author_id = 2;
+  string title = 3;
+  string body = 4;
+}
+```
+
+The client will automatically provide:
+
+- `reflog.insert.user()`
+- `reflog.insert.article()`
+- `reflog.update.user()`
+- `reflog.update.article()`
+- `reflog.delete.user()`
+- `reflog.delete.article()`
+
+All methods are fully typed based on your protobuf schema.
+
+## Error Handling
+
+All ingest operations (insert, update, delete) use background retries for maximum reliability. The operation tries once immediately, and if it fails with a retryable error, the promise resolves immediately while retries continue in the background.
+
+```js
+// This resolves immediately even if the service is down
+// Retries continue in the background automatically
+const result = await reflog.insert.user({
+  entityId: 'user-123',
+  payload: { id: 'user-123', name: 'John' },
+});
+
+// When closing, wait for pending retries to complete
+await reflog.close(); // Waits up to 5 seconds for background retries
 ```

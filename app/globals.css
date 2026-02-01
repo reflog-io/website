@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /*
  * If you want Nextra theme styles globally, you can also import them here:
@@ -21,8 +21,9 @@
   --color-rust-500: #dea584;
 
   --font-sans: Inter, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    Liberation Mono, Courier New, monospace;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono,
+    Courier New, monospace;
 }
 
 body {
@@ -31,16 +32,9 @@ body {
 
 .grid-bg {
   background-size: 40px 40px;
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px
-    );
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
 /* Gradient text with a safe fallback (never invisible). */
@@ -61,4 +55,53 @@ body {
     background-clip: text;
     color: transparent;
   }
+}
+
+@keyframes expandCircle {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(150% at 50% 50%);
+  }
+}
+
+@keyframes expandYellowScale {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(70);
+    opacity: 1;
+  }
+}
+
+@keyframes starPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6)) brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.9)) brightness(1.2);
+  }
+}
+
+.expand-yellow {
+  animation: expandCircle 0.8s ease-out forwards;
+}
+
+.expand-yellow-scale {
+  animation: expandYellowScale 0.8s ease-out forwards;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+}
+
+.star-pulse {
+  animation: starPulse 2s ease-in-out infinite;
 }

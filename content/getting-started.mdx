@@ -4,16 +4,46 @@ title: Getting Started
 
 # Getting Started
 
-This is an example section to show how docs pages are organized under `/docs`.
+This page shows the quickest way to run Reflog locally.
 
-## Install
+## Run locally via Docker
 
 ```bash
-curl -L https://example.com/reflog/releases/latest | sh
+docker pull ghcr.io/reflog-io/reflog-engine:0.1.19
 ```
 
-## Run
+### Run the container (quick start)
 
 ```bash
-reflog-server --config reflog-config.toml
+mkdir -p data
+docker run --rm \
+  -p 50051:50051 \
+  -v "$PWD/data:/data" \
+  ghcr.io/reflog-io/reflog-engine:0.1.19
+```
+
+### Run with `reflog-docker` (docker compose)
+
+The `reflog-docker` repo provides a local runner that builds an image and starts the engine with sensible defaults:
+
+- Container image (GHCR): `https://github.com/reflog-io/reflog-docker/pkgs/container/reflog-engine`
+- Runner repo: `https://github.com/reflog-io/reflog-docker`
+
+```bash
+git clone https://github.com/reflog-io/reflog-docker
+cd reflog-docker
+docker compose up --build
+```
+
+### Optional: custom proto
+
+If you have a custom proto file, mount it and point the engine at it:
+
+```bash
+docker run --rm \
+  -p 50051:50051 \
+  -e REFLOG_CUSTOM_PROTO_PATH=/data/custom.proto \
+  -v "$PWD/custom.proto:/data/custom.proto:ro" \
+  -v "$PWD/data:/data" \
+  ghcr.io/reflog-io/reflog-engine:0.1.19
 ```
