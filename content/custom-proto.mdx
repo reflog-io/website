@@ -1,0 +1,153 @@
+---
+title: Custom Proto
+---
+
+# Custom Proto
+
+Reflog uses a custom protobuf schema to define your domain entities and their relationships. You provide a `custom.proto` file (or any name) and mount it when running the engine. The schema drives the ingest API: the engine exposes insert/update/delete methods per message type and uses relationship options for referential semantics.
+
+## File setup
+
+- Use **proto3** syntax.
+- Use the **`reflog.v1`** package (or ensure your options import matches).
+- **Import** the Reflog options extension so you can use `foreign_key` and `relationship_type` on fields.
+
+```protobuf
+syntax = "proto3";
+
+package reflog.v1;
+
+import "options.proto";
+```
+
+The `options.proto` file is provided by Reflog and defines the custom field options used for relationships.
+
+## Defining entities
+
+Each **top-level message** is an entity type. Field names and types define the shape of your data. Use **nested messages** for embedded structures (e.g. `Profile`, `Metadata`).
+
+### Simple entity
+
+```protobuf
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+
+  message Profile {
+    string display_name = 1;
+    string avatar_url = 2;
+    string bio = 3;
+    int64 created_at = 4;
+  }
+
+  Profile profile = 4;
+}
+```
+
+### Relationships
+
+To model relationships between entities, add Reflog options on the field that holds the reference:
+
+- **`(reflog.v1.foreign_key) = "OtherMessage.id"`** — identifies the referenced entity and field (e.g. `User.id`, `Article.id`).
+- **`(reflog.v1.relationship_type) = "many_to_one"`** — indicates this entity has many records that point to one of the other (e.g. many articles to one user).
+
+Example: an article belongs to one author (many articles → one user):
+
+```protobuf
+message Article {
+  string id = 1;
+
+  string author_id = 2 [
+    (reflog.v1.foreign_key) = "User.id",
+    (reflog.v1.relationship_type) = "many_to_one"
+  ];
+
+  string title = 3;
+  string body = 4;
+  // ...
+}
+```
+
+You can use the same pattern on nested messages (e.g. a `Reaction` referencing `User.id`).
+
+## Full example
+
+The following schema defines users, articles, comments, and reactions. It uses nested messages for embedded data and `foreign_key` / `relationship_type` for relationships.
+
+```protobuf
+syntax = "proto3";
+
+package reflog.v1;
+
+import "options.proto";
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+
+  message Profile {
+    string display_name = 1;
+    string avatar_url = 2;
+    string bio = 3;
+    int64 created_at = 4;
+  }
+
+  Profile profile = 4;
+}
+
+message Article {
+  string id = 1;
+
+  string author_id = 2 [
+    (reflog.v1.foreign_key) = "User.id",
+    (reflog.v1.relationship_type) = "many_to_one"
+  ];
+
+  string title = 3;
+  string body = 4;
+
+  message Metadata {
+    repeated string tags = 1;
+    bool published = 2;
+    int64 published_at = 3;
+    int64 updated_at = 4;
+  }
+
+  Metadata metadata = 5;
+}
+
+message Comment {
+  string id = 1;
+
+  string article_id = 2 [
+    (reflog.v1.foreign_key) = "Article.id",
+    (reflog.v1.relationship_type) = "many_to_one"
+  ];
+
+  string user_id = 3 [
+    (reflog.v1.foreign_key) = "User.id",
+    (reflog.v1.relationship_type) = "many_to_one"
+  ];
+
+  string comment = 4;
+  int64 created_at = 5;
+
+  message Reaction {
+    string user_id = 1 [
+      (reflog.v1.foreign_key) = "User.id",
+      (reflog.v1.relationship_type) = "many_to_one"
+    ];
+    string type = 2; // "like", "laugh", "angry", etc
+    int64 reacted_at = 3;
+  }
+
+  repeated Reaction reactions = 6;
+}
+```
+
+## Using your schema
+
+- **Engine**: Point the engine at your proto file (e.g. with `REFLOG_CUSTOM_PROTO_PATH`) and mount the file when running in Docker. See [Getting Started](/docs/getting-started#optional-custom-proto).
+- **Clients**: Clients such as the [Node client](/clients/node) generate typed insert/update/delete methods from your message types, so you get `reflog.insert.user()`, `reflog.update.article()`, and so on, based on your `custom.proto`.

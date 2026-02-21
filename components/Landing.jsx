@@ -130,7 +130,7 @@ export default function Landing() {
               </li>
               <li>
                 <a
-                  href="#docs"
+                  href="/docs"
                   className="block py-2 px-3 text-gray-400 hover:text-white md:p-0 transition-colors"
                 >
                   Documentation
