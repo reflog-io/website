@@ -1,5 +1,5 @@
 export default {
-  index: 'Introduction',
+  index: 'Why Reflog?',
   architecture: 'Architecture',
   'getting-started': 'Getting Started',
   'custom-proto': 'Custom Proto',

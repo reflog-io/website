@@ -1,5 +1,67 @@
-# Reflog Docs
+# Why Reflog?
 
-This is the documentation site for Reflog.
+Reflog captures immutable operational events and continuously materializes them into Parquet projections.
+
+You get both event history and current state from one ingest path. And because outputs are Parquet, your data is not trapped in Reflog; it plugs directly into DuckDB, Spark, Polars, DataFusion, warehouses, and lakehouse tooling.
+
+Reflog is built for teams that need reliable event logging plus analytics-ready data, without taking on Kafka/Flink-level complexity on day one.
+
+## 1. Problem statement
+
+Event data is usually split across logs, OLTP tables, and ad-hoc pipelines.
+
+Teams are forced to choose between:
+
+- Easy ingest but hard analytics later
+- Powerful analytics but heavy infrastructure upfront
+
+Reflog closes that gap.
+
+## 2. What Reflog gives you
+
+- **Append-only ingest** for full auditability
+- **Dual projections**
+  - `_events`: complete event history
+  - `_current`: latest entity state
+- **Parquet-native output** for interoperability and query performance
+- **Operational safety** through checkpoints, segmented processing, and crash recovery patterns
+
+## 3. Architecture at a glance
+
+1. gRPC ingest accepts entity operation events
+2. Events are written to append-only segments
+3. A background processor reads closed segments
+4. Reflog writes Parquet projections (`_events`, `_current`) with compaction and partitioning
+
+This keeps ingest simple while still producing trusted, analytics-friendly outputs.
+
+## 4. Why Parquet matters
+
+- **Columnar format**: efficient analytical scans on large datasets
+- **Predicate pushdown and partition pruning**: faster queries, lower compute cost
+- **Open standard**: no lock-in, easy downstream integration
+- **Flexible workflows**: works for ad hoc analysis and scheduled pipelines
+
+## 5. Use cases
+
+- **Audit trails and compliance**: immutable record of creates/updates/deletes
+- **Product analytics**: lifecycle and behavioral events ready for BI and SQL
+- **Data lake ingestion edge**: operational events landed as query-ready Parquet
+- **Entity snapshots**: `_current` projection for latest-truth tables
+- **Backfill and replay**: deterministic projection rebuilds from the log
+- **AI feature pipelines**: combine history and latest state as model inputs
+
+## 6. When Reflog is a fit (and when it is not)
+
+### Great fit
+
+- Single-team to mid-scale event pipelines
+- Internal platforms that need fast iteration
+- Teams that want one ingest path for operations + analytics
+
+### Not ideal (yet)
+
+- Ultra-high-throughput, global multi-region streaming
+- Complex exactly-once guarantees across many independent sinks
 
 - [Back to home](/)

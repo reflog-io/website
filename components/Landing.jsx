@@ -23,12 +23,38 @@ export default function Landing() {
     }
   }, [isExpanding]);
 
-  const handleMouseMove = useCallback((e) => {
+  const getPointerPosition = (e) => {
+    if ("touches" in e && e.touches.length > 0) {
+      return {
+        x: e.touches[0].pageX,
+        y: e.touches[0].pageY,
+      };
+    }
+
+    if ("changedTouches" in e && e.changedTouches.length > 0) {
+      return {
+        x: e.changedTouches[0].pageX,
+        y: e.changedTouches[0].pageY,
+      };
+    }
+
+    return {
+      x: e.pageX,
+      y: e.pageY,
+    };
+  };
+
+  const handlePointerMove = useCallback((e) => {
     if (bashWindowRef.current && dragStartRef.current.mouseX !== undefined) {
+      if ("touches" in e) {
+        e.preventDefault();
+      }
+
+      const { x, y } = getPointerPosition(e);
       e.preventDefault();
 
-      const deltaX = e.pageX - dragStartRef.current.mouseX;
-      const deltaY = e.pageY - dragStartRef.current.mouseY;
+      const deltaX = x - dragStartRef.current.mouseX;
+      const deltaY = y - dragStartRef.current.mouseY;
 
       setPosition({
         x: dragStartRef.current.initialX + deltaX,
@@ -37,19 +63,21 @@ export default function Landing() {
     }
   }, []);
 
-  const handleMouseUp = useCallback(() => {
+  const handlePointerEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  const handleMouseDown = (e) => {
+  const handlePointerStart = (e) => {
+    const { x, y } = getPointerPosition(e);
     e.preventDefault();
     e.stopPropagation();
+
     if (bashWindowRef.current) {
       dragStartRef.current = {
         initialX: position.x,
         initialY: position.y,
-        mouseX: e.pageX,
-        mouseY: e.pageY,
+        mouseX: x,
+        mouseY: y,
       };
       setIsDragging(true);
     }
@@ -57,21 +85,32 @@ export default function Landing() {
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      const touchMoveOptions = { passive: false };
+      document.addEventListener("mousemove", handlePointerMove);
+      document.addEventListener("mouseup", handlePointerEnd);
+      document.addEventListener("touchmove", handlePointerMove, touchMoveOptions);
+      document.addEventListener("touchend", handlePointerEnd);
+
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("mousemove", handlePointerMove);
+        document.removeEventListener("mouseup", handlePointerEnd);
+        document.removeEventListener(
+          "touchmove",
+          handlePointerMove,
+          touchMoveOptions
+        );
+        document.removeEventListener("touchend", handlePointerEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handlePointerMove, handlePointerEnd]);
 
-  const handleStarClick = (e) => {
+  const handleStarActivate = (e) => {
     // Don't trigger if we're dragging
     if (isDragging) {
       return;
     }
 
+    e.preventDefault();
     e.stopPropagation();
 
     // Get the star's position relative to viewport
@@ -141,7 +180,7 @@ export default function Landing() {
         </div>
       </nav>
 
-      <section className="grid-bg relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-visible">
+      <section className="grid-bg relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-x-clip overflow-y-visible">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-x-2 rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-sm font-medium text-gray-300 mb-8 backdrop-blur-sm">
             <span className="flex h-2 w-2 rounded-full bg-reflog-400 animate-pulse"></span>
@@ -199,7 +238,8 @@ export default function Landing() {
                 viewBox="0 0 100 100"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-full h-full cursor-pointer transition-transform hover:scale-110 active:scale-95"
-                onClick={handleStarClick}
+                onClick={handleStarActivate}
+                onTouchStart={handleStarActivate}
                 style={{ pointerEvents: "auto" }}
               >
                 {/* Black outline */}
@@ -232,7 +272,8 @@ export default function Landing() {
             >
               <div
                 className="bash-window-drag-handle flex items-center gap-2 border-b border-gray-800 bg-gray-800/50 px-4 py-2 cursor-grab active:cursor-grabbing select-none relative z-20"
-                onMouseDown={handleMouseDown}
+                onMouseDown={handlePointerStart}
+                onTouchStart={handlePointerStart}
               >
                 <div className="h-3 w-3 rounded-full bg-red-500"></div>
                 <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
@@ -280,7 +321,7 @@ export default function Landing() {
       {/* Yellow expansion overlay - scales from star position */}
       {isExpanding && (
         <div
-          className="fixed bg-yellow-400 z-[9999] expand-yellow-scale"
+          className="fixed bg-yellow-400/50 z-9999 expand-yellow-scale"
           style={{
             left: `${starPosition.x}px`,
             top: `${starPosition.y}px`,
