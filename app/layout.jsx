@@ -5,7 +5,7 @@ export const metadata = {
     default: "Reflog",
     template: "%s | Reflog",
   },
-  description: "The SQLite of Event Sourcing",
+  description: "Capture Events Once. Query Anywhere.",
 };
 
 export default function RootLayout({ children }) {

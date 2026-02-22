@@ -563,7 +563,7 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
+            <div className="min-w-0 p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
               <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6">
                 <svg
                   className="w-6 h-6 text-blue-400"
@@ -595,7 +595,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
+            <div className="min-w-0 p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
               <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6">
                 <svg
                   className="w-6 h-6 text-purple-400"
@@ -611,33 +611,34 @@ export default function Landing() {
                   ></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3">
+              <h3 className="text-xl font-bold mb-3 wrap-break-word">
                 ML Training/Serving Parity
               </h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
+              <p className="text-gray-400 mb-6 leading-relaxed wrap-break-word">
                 Build feature pipelines from the same Parquet projections used
                 in production analytics. Combine event history and latest state
                 for reproducible training sets.
               </p>
-              <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
+              <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5 overflow-x-auto min-w-0">
                 <span className="text-blue-400">import</span> polars{" "}
                 <span className="text-blue-400">as</span> pl
                 <br />
-                events = pl.read_parquet(
+                events = <br />
+                pl.read_parquet(
                 <span className="text-yellow-400">
-                  &quot;data/reflog/_events/*.parquet&quot;
+                  &quot;/rl/_events/*.parquet&quot;
                 </span>
                 )
                 <br />
                 current = pl.read_parquet(
                 <span className="text-yellow-400">
-                  &quot;data/reflog/_current/*.parquet&quot;
+                  &quot;/rl/_current/*.parquet&quot;
                 </span>
                 )
               </div>
             </div>
 
-            <div className="p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
+            <div className="min-w-0 p-8 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-colors">
               <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mb-6">
                 <svg
                   className="w-6 h-6 text-green-400"
