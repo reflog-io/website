@@ -192,29 +192,27 @@ export default function Landing() {
           </div>
 
           <h1 className="mx-auto max-w-4xl font-display text-5xl font-bold tracking-tight text-white sm:text-7xl">
-            The &quot;SQLite&quot; of <br />
-            <span className="gradient-text">Event Sourcing</span>
+            Capture Events Once. <br />
+            <span className="gradient-text">Query Anywhere.</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-gray-400">
-            Single binary with gRPC ingest and append-only durability. Reflog
-            continuously materializes Parquet projections for both immutable
-            history and latest state, plus a Web UI to browse entities and
-            inspect their event timelines.
+            gRPC ingest, append-only durability, and automatic Parquet
+            projections for full history (_events) and latest state (_current).
           </p>
 
           <div className="mt-10 flex justify-center gap-x-6">
             <a
-              href="#"
+              href="/docs/getting-started"
               className="rounded-md bg-reflog-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-reflog-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-reflog-400 transition-all"
             >
-              Download Binary
+              Get Started
             </a>
             <a
-              href="https://github.com/reflog-io"
+              href="/docs/architecture"
               className="group text-sm font-semibold leading-6 text-white flex items-center gap-2"
             >
-              View on GitHub{" "}
+              Read Architecture{" "}
               <span
                 aria-hidden="true"
                 className="group-hover:translate-x-1 transition-transform"
