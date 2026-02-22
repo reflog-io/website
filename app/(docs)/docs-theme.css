@@ -11,18 +11,15 @@ body {
 }
 
 /*
- * Nextra docs theme uses various panels (sidebar/nav/content wrappers) that can
- * default to pure black. Make them transparent so the base background shows through.
- *
- * (We keep selectors broad to avoid coupling to a specific Nextra internal class list.)
+ * Keep only the main content transparent to show the base docs background.
+ * Sidebar/menu containers should retain a solid background for readability.
  */
-body > header,
-body > nav,
-body > aside,
 body > main,
-main,
-nav,
-aside,
-header {
+main {
   background-color: transparent !important;
+}
+
+aside,
+body > aside {
+  background-color: #111827 !important;
 }

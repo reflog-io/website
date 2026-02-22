@@ -26,34 +26,34 @@ Alternatively, you can pass these as configuration options when creating the cli
 ### Basic Example
 
 ```js
-import { createClient } from '@reflog/client';
+import { createClient } from "@reflog/client";
 
 async function main() {
   // Initialize the client (reads REFLOG_HOST and REFLOG_CLIENT_ID from env)
   const reflog = await createClient();
 
   // Insert a user
-  await reflog.insert.user({
-    entityId: 'user-123',
+  await reflog.insert.User({
+    entityId: "user-123",
     payload: {
-      id: 'user-123',
-      name: 'John Doe',
-      email: 'john@example.com',
+      id: "user-123",
+      name: "John Doe",
+      email: "john@example.com",
     },
   });
 
   // Update an article
-  await reflog.update.article({
-    entityId: 'article-456',
+  await reflog.update.Article({
+    entityId: "article-456",
     payload: {
-      id: 'article-456',
-      title: 'Updated Title',
-      body: 'Updated body content',
+      id: "article-456",
+      title: "Updated Title",
+      body: "Updated body content",
     },
   });
 
   // Delete a user
-  await reflog.delete.user('user-123');
+  await reflog.delete.User("user-123");
 
   // Close the connection when done
   await reflog.close();
@@ -65,11 +65,11 @@ main().catch(console.error);
 ### With Custom Configuration
 
 ```js
-import { createClient } from '@reflog/client';
+import { createClient } from "@reflog/client";
 
 const reflog = await createClient({
-  host: 'localhost:50051',
-  clientId: 'my-client-id',
+  host: "localhost:50051",
+  clientId: "my-client-id",
   retry: {
     maxRetries: 5,
     initialBackoffMs: 200,
@@ -99,12 +99,12 @@ message Article {
 
 The client will automatically provide:
 
-- `reflog.insert.user()`
-- `reflog.insert.article()`
-- `reflog.update.user()`
-- `reflog.update.article()`
-- `reflog.delete.user()`
-- `reflog.delete.article()`
+- `reflog.insert.User()`
+- `reflog.insert.Article()`
+- `reflog.update.User()`
+- `reflog.update.Article()`
+- `reflog.delete.User()`
+- `reflog.delete.Article()`
 
 All methods are fully typed based on your protobuf schema.
 
@@ -115,9 +115,9 @@ All ingest operations (insert, update, delete) use background retries for maximu
 ```js
 // This resolves immediately even if the service is down
 // Retries continue in the background automatically
-const result = await reflog.insert.user({
-  entityId: 'user-123',
-  payload: { id: 'user-123', name: 'John' },
+const result = await reflog.insert.User({
+  entityId: "user-123",
+  payload: { id: "user-123", name: "John" },
 });
 
 // When closing, wait for pending retries to complete

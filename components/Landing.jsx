@@ -193,15 +193,16 @@ export default function Landing() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-gray-400">
-            Single binary. High-performance gRPC ingest. Zero-config &quot;Time
-            Travel&quot; queries. Reflog brings the power of the Data Lakehouse
-            to your application backend without the complexity.
+            Single binary with gRPC ingest and append-only durability. Reflog
+            continuously materializes Parquet projections for both immutable
+            history and latest state, plus a Web UI to browse entities and
+            inspect their event timelines.
           </p>
 
           <div className="mt-10 flex justify-center gap-x-6">
             <a
               href="#"
-              className="rounded-md bg-reflog-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-reflog-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-reflog-400 transition-all"
+              className="rounded-md bg-reflog-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-reflog-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-reflog-400 transition-all"
             >
               Download Binary
             </a>
@@ -385,11 +386,12 @@ export default function Landing() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-white mb-2">
-                Native Time Travel
+                Dual Projections
               </h3>
               <p className="text-gray-400">
-                Reflog keeps a perfect audit trail. Query your entity state as
-                it existed 5 minutes ago, or 5 years ago.
+                Get two query shapes from one ingest path: <code>_events</code>{" "}
+                for immutable history and <code>_current</code> for latest
+                entity state.
               </p>
             </div>
 
@@ -413,8 +415,9 @@ export default function Landing() {
                 Open Storage Standards
               </h3>
               <p className="text-gray-400">
-                Data is materialized into standard Parquet files. Query it
-                instantly with DuckDB, Polars, or Amazon Athena.
+                Reflog writes standard Parquet outputs so your data stays
+                portable across DuckDB, Spark, Polars, DataFusion, and
+                warehouse/lakehouse tooling.
               </p>
             </div>
 
@@ -435,12 +438,12 @@ export default function Landing() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-white mb-2">
-                Cloud-Native Resilience
+                Operational Safety
               </h3>
               <p className="text-gray-400">
-                Designed for Active/Passive failover using shared block storage
-                (EBS/Azure Disk). Includes strict file locking and automatic
-                crash recovery.
+                Segmented processing, checkpoints, and crash-recovery patterns
+                keep ingestion simple while projections remain reliable and
+                deterministic.
               </p>
             </div>
           </div>
@@ -452,12 +455,13 @@ export default function Landing() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
             <div>
               <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6">
-                Drop-in Integration
+                Architecture At A Glance
               </h2>
               <p className="text-gray-400 text-lg mb-8">
-                Reflog speaks gRPC. Define your entity schema in Protobuf, point
-                your application at the Reflog node, and stop worrying about
-                state consistency.
+                Reflog keeps the write path lightweight while producing
+                analytics-ready outputs. Events flow through append-only
+                segments and are projected in the background to query-friendly
+                Parquet tables.
               </p>
 
               <ul className="space-y-4 text-gray-300">
@@ -475,7 +479,7 @@ export default function Landing() {
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
-                  Rust-based for stable, low-latency writes
+                  gRPC ingest accepts create/update/delete entity events
                 </li>
                 <li className="flex items-center">
                   <svg
@@ -491,7 +495,7 @@ export default function Landing() {
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
-                  Optional Redis Stream integration for buffering
+                  Events are durably written to append-only segments
                 </li>
                 <li className="flex items-center">
                   <svg
@@ -507,54 +511,37 @@ export default function Landing() {
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
-                  Automatic &quot;Delta + Base&quot; compaction
+                  Background projection builds <code>_events</code> and{" "}
+                  <code>_current</code>
                 </li>
               </ul>
             </div>
 
             <div className="mt-12 lg:mt-0 bg-gray-800 rounded-xl border border-gray-700 p-6 font-mono text-sm">
-              <div className="text-gray-500 mb-2">// reflog-config.toml</div>
+              <div className="text-gray-500 mb-2">// query examples</div>
               <div>
-                <span className="text-purple-400">server</span>{" "}
-                <span className="text-white">{"{"}</span>
-                <div className="pl-4">
-                  <span className="text-blue-400">listen_addr</span> ={" "}
-                  <span className="text-green-400">
-                    &quot;0.0.0.0:50051&quot;
-                  </span>
-                  <br />
-                  <span className="text-blue-400">storage_path</span> ={" "}
-                  <span className="text-green-400">&quot;/data&quot;</span>
-                </div>
-                <span className="text-white">{"}"}</span>
+                <span className="text-blue-400">SELECT</span>{" "}
+                <span className="text-white">*</span>{" "}
+                <span className="text-blue-400">FROM</span>{" "}
+                <span className="text-yellow-400">reflog._events</span>
                 <br />
-                <span className="text-purple-400">compaction</span>{" "}
-                <span className="text-white">{"{"}</span>
-                <div className="pl-4">
-                  <span className="text-blue-400">strategy</span> ={" "}
-                  <span className="text-green-400">
-                    &quot;delta_plus_base&quot;
-                  </span>
-                  <br />
-                  <span className="text-blue-400">interval_seconds</span> ={" "}
-                  <span className="text-yellow-400">300</span>
-                </div>
-                <span className="text-white">{"}"}</span>
+                <span className="text-blue-400">WHERE</span>{" "}
+                <span className="text-green-400">entity_id</span> ={" "}
+                <span className="text-green-400">&apos;user_123&apos;</span>
                 <br />
-                <span className="text-purple-400">failover</span>{" "}
-                <span className="text-white">{"{"}</span>
-                <div className="pl-4">
-                  <span className="text-blue-400">mode</span> ={" "}
-                  <span className="text-green-400">
-                    &quot;active_passive&quot;
-                  </span>
-                  <br />
-                  <span className="text-blue-400">lock_file</span> ={" "}
-                  <span className="text-green-400">
-                    &quot;_meta/instance.lock&quot;
-                  </span>
-                </div>
-                <span className="text-white">{"}"}</span>
+                <span className="text-blue-400">ORDER BY</span>{" "}
+                <span className="text-green-400">event_time</span>{" "}
+                <span className="text-blue-400">DESC</span>;
+                <br />
+                <br />
+                <span className="text-blue-400">SELECT</span>{" "}
+                <span className="text-white">*</span>{" "}
+                <span className="text-blue-400">FROM</span>{" "}
+                <span className="text-yellow-400">reflog._current</span>
+                <br />
+                <span className="text-blue-400">WHERE</span>{" "}
+                <span className="text-green-400">entity_id</span> ={" "}
+                <span className="text-green-400">&apos;user_123&apos;</span>;
               </div>
             </div>
           </div>
@@ -562,7 +549,7 @@ export default function Landing() {
       </section>
 
       <section className="py-24 bg-[#0a0a0a] text-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="mb-16">
             <h2 className="text-4xl font-bold tracking-tight mb-4">
               Beyond the Event Store.
@@ -591,21 +578,18 @@ export default function Landing() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-3">
-                One-Click Customer Audits
+                Browser-Based Entity Explorer
               </h3>
               <p className="text-gray-400 mb-6 leading-relaxed">
-                Stop digging through logs to answer &quot;why did this
-                user&apos;s balance change?&quot;. Generate human-readable
-                timelines of every state change for any entity directly from
-                your Parquet projections.
+                Use the Web UI to browse entity types, inspect records, and see
+                full change history without building custom dashboards first.
               </p>
               <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
-                <span className="text-gray-500">
-                  # Query state for support ticket #882
-                </span>
+                <span className="text-gray-500"># Web UI workflow</span>
                 <br />
-                <span className="text-green-400">reflog</span> audit --entity
-                user_123 --format pdf
+                Entities → users → user_123
+                <br />
+                History → ordered event timeline
               </div>
             </div>
 
@@ -629,17 +613,23 @@ export default function Landing() {
                 ML Training/Serving Parity
               </h3>
               <p className="text-gray-400 mb-6 leading-relaxed">
-                Train models on the exact same data structures they will see in
-                production. Use the Python client to stream historical Parquet
-                segments directly into Polars or DataFrames for training.
+                Build feature pipelines from the same Parquet projections used
+                in production analytics. Combine event history and latest state
+                for reproducible training sets.
               </p>
               <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
                 <span className="text-blue-400">import</span> polars{" "}
                 <span className="text-blue-400">as</span> pl
                 <br />
-                df = pl.read_parquet(
+                events = pl.read_parquet(
                 <span className="text-yellow-400">
-                  &quot;data/segments/*.parquet&quot;
+                  &quot;data/reflog/_events/*.parquet&quot;
+                </span>
+                )
+                <br />
+                current = pl.read_parquet(
+                <span className="text-yellow-400">
+                  &quot;data/reflog/_current/*.parquet&quot;
                 </span>
                 )
               </div>
@@ -668,21 +658,20 @@ export default function Landing() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-3">
-                High-Fidelity Shadow Deploys
+                Deterministic Replay &amp; Backfill
               </h3>
               <p className="text-gray-400 mb-6 leading-relaxed">
-                Test major architectural changes by replaying millions of
-                records against a &quot;shadow&quot; service. Compare the
-                resulting Parquet projections with your production baseline to
-                catch regressions before they ship.
+                Rebuild projections from append-only history when logic evolves.
+                Deterministic processing makes validation and backfills safer as
+                schemas or downstream models change.
               </p>
               <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
                 <span className="text-gray-500">
-                  // Validate new projection logic
+                  // Reprocess closed segments
                 </span>
                 <br />
-                ✓ 125,000,000 events replayed
-                <br />✓ 0.00% diff vs production
+                ✓ checkpoint restored
+                <br />✓ projections rebuilt
               </div>
             </div>
 
@@ -704,15 +693,14 @@ export default function Landing() {
               </div>
               <h3 className="text-xl font-bold mb-3">Time-Travel Debugging</h3>
               <p className="text-gray-400 mb-6 leading-relaxed">
-                When a bug is reported, don&apos;t just look at the current
-                state. Use the Reflog UI to see the exact state of the world
-                when the error occurred. Replay the specific event sequence to
-                reproduce the bug locally.
+                Investigate incidents with both views: trace exact event history
+                from <code>_events</code> and confirm current truth in{" "}
+                <code>_current</code>. Query with your existing SQL tools.
               </p>
               <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
-                <span className="text-green-400">reflog</span> fork --timestamp{" "}
+                duckdb -c{" "}
                 <span className="text-yellow-400">
-                  &quot;2024-05-12T14:30Z&quot;
+                  &quot;SELECT * FROM reflog._events WHERE entity_id=&apos;user_123&apos;&quot;
                 </span>
               </div>
             </div>
