@@ -88,7 +88,11 @@ export default function Landing() {
       const touchMoveOptions = { passive: false };
       document.addEventListener("mousemove", handlePointerMove);
       document.addEventListener("mouseup", handlePointerEnd);
-      document.addEventListener("touchmove", handlePointerMove, touchMoveOptions);
+      document.addEventListener(
+        "touchmove",
+        handlePointerMove,
+        touchMoveOptions,
+      );
       document.addEventListener("touchend", handlePointerEnd);
 
       return () => {
@@ -97,7 +101,7 @@ export default function Landing() {
         document.removeEventListener(
           "touchmove",
           handlePointerMove,
-          touchMoveOptions
+          touchMoveOptions,
         );
         document.removeEventListener("touchend", handlePointerEnd);
       };
@@ -134,7 +138,7 @@ export default function Landing() {
       <nav className="fixed w-full z-50 top-0 start-0 border-b border-gray-800 bg-gray-900/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between p-4">
           <a
-            href="#"
+            href="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <span className="self-center text-2xl font-bold whitespace-nowrap text-white tracking-tight">
@@ -143,7 +147,7 @@ export default function Landing() {
           </a>
           <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
             <a
-              href="https://github.com/your-username/reflog"
+              href="https://github.com/reflog-io"
               className="text-white bg-reflog-600 hover:bg-reflog-700 focus:ring-4 focus:outline-none focus:ring-reflog-900 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all"
             >
               Get Started
@@ -207,7 +211,7 @@ export default function Landing() {
               Download Binary
             </a>
             <a
-              href="#"
+              href="https://github.com/reflog-io"
               className="group text-sm font-semibold leading-6 text-white flex items-center gap-2"
             >
               View on GitHub{" "}
@@ -700,7 +704,8 @@ export default function Landing() {
               <div className="bg-black/40 p-4 rounded-lg font-mono text-sm border border-white/5">
                 duckdb -c{" "}
                 <span className="text-yellow-400">
-                  &quot;SELECT * FROM reflog._events WHERE entity_id=&apos;user_123&apos;&quot;
+                  &quot;SELECT * FROM reflog._events WHERE
+                  entity_id=&apos;user_123&apos;&quot;
                 </span>
               </div>
             </div>
@@ -716,14 +721,14 @@ export default function Landing() {
             </p>
           </div>
           <div className="flex justify-center space-x-6 md:order-2">
-            <a href="#" className="text-gray-400 hover:text-gray-300">
+            <a
+              href="https://github.com/reflog-io"
+              className="text-gray-400 hover:text-gray-300"
+            >
               GitHub
             </a>
-            <a href="#" className="text-gray-400 hover:text-gray-300">
+            <a href="/docs" className="text-gray-400 hover:text-gray-300">
               Docs
-            </a>
-            <a href="#" className="text-gray-400 hover:text-gray-300">
-              Twitter
             </a>
           </div>
         </div>
