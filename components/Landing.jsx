@@ -85,6 +85,9 @@ export default function Landing() {
 
   useEffect(() => {
     if (isDragging) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
       const touchMoveOptions = { passive: false };
       document.addEventListener("mousemove", handlePointerMove);
       document.addEventListener("mouseup", handlePointerEnd);
@@ -96,6 +99,7 @@ export default function Landing() {
       document.addEventListener("touchend", handlePointerEnd);
 
       return () => {
+        document.body.style.overflow = previousOverflow;
         document.removeEventListener("mousemove", handlePointerMove);
         document.removeEventListener("mouseup", handlePointerEnd);
         document.removeEventListener(
